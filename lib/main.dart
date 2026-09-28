@@ -16,15 +16,47 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Flutter UI Fundamentals'),
+          title: const Text('Flutter Basic Widgets'),
+          backgroundColor: Colors.blue,
         ),
         body: Center(
-          child: Text(
-            '$studentId\n$studentName',
-            textAlign: TextAlign.left,
-            style: const TextStyle(fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const CircleAvatar(
+                radius: 50,
+                backgroundImage: AssetImage('assets/images/profile.png'),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                studentName,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                studentId,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.phone_android, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Text(
+                    'Tertarik pada pengembangan aplikasi Mobile',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
