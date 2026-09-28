@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 const String studentName = 'I Wayan Agus Wredhi Putra';
 const String studentId = '2415051007';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -16,13 +14,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Flutter Basic Widgets'),
+          title: const Text('Flutter Row & Column Layout'),
           backgroundColor: Colors.blue,
         ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const CircleAvatar(
                 radius: 50,
@@ -31,18 +28,12 @@ class MyApp extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 studentName,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               Text(
                 studentId,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 12),
               const Row(
@@ -50,16 +41,37 @@ class MyApp extends StatelessWidget {
                 children: [
                   Icon(Icons.phone_android, color: Colors.blue),
                   SizedBox(width: 8),
-                  Text(
-                    'Tertarik pada pengembangan aplikasi Mobile',
-                    style: TextStyle(fontSize: 14),
-                  ),
+                  Text('Tertarik pada pengembangan aplikasi Mobile'),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Divider(indent: 40, endIndent: 40),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildStatItem('8', 'Widget'),
+                  _buildStatItem('4', 'Layout'),
+                  _buildStatItem('1', 'State'),
                 ],
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStatItem(String count, String label) {
+    return Column(
+      children: [
+        Text(
+          count,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 4),
+        Text(label, style: const TextStyle(color: Colors.grey)),
+      ],
     );
   }
 }
