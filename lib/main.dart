@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Tahap 7: Card & Styling'),
+          title: const Text('Tahap 8: Reusable Widget'),
           backgroundColor: Colors.blue,
         ),
         body: SingleChildScrollView(
@@ -66,23 +66,14 @@ class MyApp extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.blue.shade200),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildStatItem('8', 'Widget'),
-                    _buildStatItem('4', 'Layout'),
-                    _buildStatItem('1', 'State'),
-                  ],
-                ),
+              Row(
+                children: [
+                  buildStatCard('8', 'Widget', Icons.widgets),
+                  buildStatCard('4', 'Layout', Icons.view_quilt),
+                  buildStatCard('1', 'State', Icons.sync),
+                ],
               ),
             ],
           ),
@@ -91,23 +82,37 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(String count, String label) {
-    return Column(
-      children: [
-        Text(
-          count,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
+  Widget buildStatCard(String value, String label, IconData icon) {
+    return Expanded(
+      child: Card(
+        elevation: 2,
+        color: Colors.blue.shade50,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+          child: Column(
+            children: [
+              Icon(icon, color: Colors.blue, size: 26),
+              const SizedBox(height: 6),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
-        ),
-      ],
+      ),
     );
   }
-} // Nama : I Wayan Agus Wredhi Putra NIM : 2415051007
+} //Nama : I Wayan Agus Wredhi Putra NIM : 2415051007
