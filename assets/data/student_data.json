@@ -1,7 +1,8 @@
 {
   "student": {
     "nim": "2415051007",
-    "name": "I Wayan Agus Wredhi Putra"
+    "name": "I Wayan Agus Wredhi Putra",
+    "prodi": "Pendidikan Teknik Informatika"
   },
   "courses": [
     {"code": "MOB01", "title": "Git & GitHub", "credits": 2, "status": "done"},
