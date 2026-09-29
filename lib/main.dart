@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Tahap 10: List & Collection'),
+          title: const Text('Tahap 11: List Lebih Informatif'),
           backgroundColor: Colors.blue,
         ),
         body: const TopicListScreen(),
@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class TopicListScreen extends StatelessWidget {
   const TopicListScreen({super.key});
   @override
@@ -47,6 +46,7 @@ class TopicListScreen extends StatelessWidget {
         'done': true,
       },
     ];
+    final int completed = topics.where((item) => item['done'] == true).length;
     return Column(
       children: [
         Container(
@@ -89,24 +89,41 @@ class TopicListScreen extends StatelessWidget {
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '$completed dari ${topics.length} topik selesai',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey,
+                ),
+              ),
+              Icon(
+                completed == topics.length
+                    ? Icons.task_alt
+                    : Icons.pending_actions,
+                color: Colors.blue,
+              ),
+            ],
+          ),
+        ),
         Expanded(
           child: ListView.builder(
             itemCount: topics.length,
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             itemBuilder: (context, index) {
               final item = topics[index];
               final bool isDone = item['done'] == true;
-
               return Card(
-                elevation: 1,
-                margin: const EdgeInsets.symmetric(vertical: 4.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 child: ListTile(
                   leading: Icon(
-                    isDone ? Icons.check_circle : Icons.circle_outlined,
-                    color: isDone ? Colors.green : Colors.grey,
+                    isDone ? Icons.check_circle : Icons.schedule,
+                    color: isDone ? Colors.green : Colors.orange,
                   ),
                   title: Text(
                     item['title'] as String,
@@ -118,10 +135,12 @@ class TopicListScreen extends StatelessWidget {
                     ),
                   ),
                   subtitle: Text(item['subtitle'] as String),
-                  trailing: Icon(
-                    isDone ? Icons.done_all : Icons.pending,
-                    size: 18,
-                    color: isDone ? Colors.green : Colors.orange,
+                  trailing: Text(
+                    isDone ? 'Selesai' : 'Belum',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDone ? Colors.green : Colors.orange,
+                    ),
                   ),
                 ),
               );
