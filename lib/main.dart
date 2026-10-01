@@ -11,46 +11,20 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Tahap 5: GridView Responsif'),
-          backgroundColor: const Color.fromARGB(255, 0, 76, 255),
+          title: const Text('Tahap 6: Scrollable & Keyboard'),
+          backgroundColor: const Color.fromARGB(255, 1, 154, 249),
           foregroundColor: Colors.white,
         ),
-        body: const ResponsiveGridPage(),
+        body: const ScrollableFormPage(),
       ),
     );
   }
 }
-class Course {
-  final String code;
-  final String title;
-  final int sks;
-  final Color color;
-
-  const Course({
-    required this.code,
-    required this.title,
-    required this.sks,
-    required this.color,
-  });
-}
-class ResponsiveGridPage extends StatelessWidget {
-  const ResponsiveGridPage({super.key});
-  final List<Course> courses = const [
-    Course(code: 'INF201', title: 'Pemrograman Mobile', sks: 3, color: Colors.blue),
-    Course(code: 'INF202', title: 'Pemrograman Web', sks: 3, color: Colors.teal),
-    Course(code: 'INF203', title: 'Basis Data', sks: 3, color: Colors.orange),
-    Course(code: 'INF204', title: 'Struktur Data', sks: 3, color: Colors.purple),
-    Course(code: 'INF205', title: 'Jaringan Komputer', sks: 3, color: Colors.indigo),
-    Course(code: 'INF206', title: 'Pembelajaran Mikro', sks: 3, color: Colors.green),
-  ];
-  int columnsFor(double width) {
-    if (width < 600) return 1;
-    if (width < 840) return 2;
-    return 3;
-  }
+class ScrollableFormPage extends StatelessWidget {
+  const ScrollableFormPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,73 +52,72 @@ class ResponsiveGridPage extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           const Text(
-            'Daftar Mata Kuliah',
+            'Form Profil & Informasi',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
+          const SizedBox(height: 16),
+          const TextField(
+            decoration: InputDecoration(
+              labelText: 'Nama Lengkap',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.person),
+            ),
+          ),
           const SizedBox(height: 12),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final cols = columnsFor(constraints.maxWidth);
-                return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: cols,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: cols == 1 ? 2.8 : 2.0,
-                  ),
-                  itemCount: courses.length,
-                  itemBuilder: (context, index) {
-                    final course = courses[index];
-                    return Card(
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border(
-                            left: BorderSide(color: course.color, width: 6),
-                          ),
-                        ),
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              course.code,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: course.color,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              course.title,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Beban: ${course.sks} SKS',
-                              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
+          const TextField(
+            decoration: InputDecoration(
+              labelText: 'NIM',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.badge),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const TextField(
+            decoration: InputDecoration(
+              labelText: 'Email',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.email),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const TextField(
+            decoration: InputDecoration(
+              labelText: 'Nomor Telepon',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.phone),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const TextField(
+            maxLines: 2,
+            decoration: InputDecoration(
+              labelText: 'Alamat',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.home),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const TextField(
+            maxLines: 2,
+            decoration: InputDecoration(
+              labelText: 'Catatan Tambahan',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.note),
+            ),
+          ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.indigo,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Simpan Data'),
             ),
           ),
         ],
