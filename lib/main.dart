@@ -1,117 +1,88 @@
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   static const String studentName = 'I Wayan Agus Wredhi Putra';
   static const String studentId = '2415051007';
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(title: const Text('Tahap 3: LayoutBuilder')),
-        body: const ResponsiveLayoutBuilder(),
+        appBar: AppBar(title: const Text('Tahap 4: Expanded & Wrap')),
+        body: const ExpandedWrapDemo(),
       ),
     );
   }
 }
-
-class ResponsiveLayoutBuilder extends StatelessWidget {
-  const ResponsiveLayoutBuilder({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth < 600) {
-          return const CompactLayout();
-        } else if (constraints.maxWidth < 840) {
-          return const MediumLayout();
-        } else {
-          return const ExpandedLayout();
-        }
-      },
+class ExpandedWrapDemo extends StatelessWidget {
+  const ExpandedWrapDemo({super.key});
+  final List skills = const [
+    'Flutter',
+    'Dart',
+    'OOP (PBO)',
+    'Algorithm',
+    'HTML & CSS',
+    'MySQL',
+    'Git',
+  ];
+  Widget buildBox(String label, Color color) {
+    return Container(
+      height: 60,
+      color: color,
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      ),
     );
   }
-}
-class CompactLayout extends StatelessWidget {
-  const CompactLayout({super.key});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.orange.shade50,
-      width: double.infinity,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Icon(Icons.phone_android, size: 60, color: Colors.orange),
-          SizedBox(height: 12),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            'Compact Layout (< 600)',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange),
+            '${MyApp.studentId} - ${MyApp.studentName}',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          SizedBox(height: 8),
-          Text('${MyApp.studentId} - ${MyApp.studentName}'),
-        ],
-      ),
-    );
-  }
-}
-class MediumLayout extends StatelessWidget {
-  const MediumLayout({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.teal.shade50,
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Icon(Icons.tablet_android, size: 70, color: Colors.teal),
-          SizedBox(width: 20),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 20),
+          const Text(
+            'Expanded Flex 2 : 1',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(height: 8),
+          Row(
             children: [
-              Text(
-                'Medium Layout (600 - 839)',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal),
+              Expanded(
+                flex: 2,
+                child: buildBox('Panel A', Colors.indigo),
               ),
-              SizedBox(height: 8),
-              Text('${MyApp.studentId} - ${MyApp.studentName}'),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 1,
+                child: buildBox('Panel B', Colors.teal),
+              ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class ExpandedLayout extends StatelessWidget {
-  const ExpandedLayout({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.green.shade50,
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: const [
-          Icon(Icons.desktop_windows, size: 80, color: Colors.green),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Expanded Layout (>= 840)',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green),
-              ),
-              SizedBox(height: 8),
-              Text('${MyApp.studentId} - ${MyApp.studentName}'),
-            ],
+          const SizedBox(height: 24),
+          const Text(
+            'Wrap Chip Skill',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: skills.map((skill) {
+              return Chip(
+                avatar: const Icon(Icons.check_circle, size: 18, color: Colors.indigo),
+                label: Text(skill),
+                backgroundColor: Colors.indigo.shade50,
+              );
+            }).toList(),
           ),
         ],
       ),
