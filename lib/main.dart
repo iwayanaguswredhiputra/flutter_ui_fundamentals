@@ -28,13 +28,14 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   final List<Widget> _pages = const [
     HomePage(),
     CourseListPage(),
+    FeedbackFormPage(),
     ProfilePage(),
   ];
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth < 600) {
+      builder: (context, constraint) {
+        if (constraint.maxWidth < 600) {
           return Scaffold(
             body: _pages[_selectedIndex],
             bottomNavigationBar: NavigationBar(
@@ -47,6 +48,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
               destinations: const [
                 NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
                 NavigationDestination(icon: Icon(Icons.school), label: 'Courses'),
+                NavigationDestination(icon: Icon(Icons.rate_review), label: 'Feedback'),
                 NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
               ],
             ),
@@ -74,6 +76,10 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                       label: Text('Courses'),
                     ),
                     NavigationRailDestination(
+                      icon: Icon(Icons.rate_review),
+                      label: Text('Feedback'),
+                    ),
+                    NavigationRailDestination(
                       icon: Icon(Icons.person),
                       label: Text('Profile'),
                     ),
@@ -97,7 +103,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tahap 12: Interaction & Feedback'),
+        title: const Text('Tahap 13: Form Input & Validasi'),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
         foregroundColor: Colors.white,
       ),
@@ -211,7 +217,6 @@ class _CourseListPageState extends State<CourseListPage> {
           'Mata Kuliah: ${course['title']}\n'
           'SKS: ${course['credits']} SKS\n'
           'Status: ${course['status']}\n\n'
-          'Keterangan: Dialog ini dipicu oleh gestur Long Press via GestureDetector.',
         ),
         actions: [
           TextButton(
@@ -276,7 +281,6 @@ class CourseCard extends StatelessWidget {
                 builder: (_) => CourseDetailPage(course: course),
               ),
             );
-
             if (result == true && context.mounted) {
               onFavoriteToggle();
             }
@@ -374,6 +378,160 @@ class CourseDetailPage extends StatelessWidget {
     );
   }
 }
+class FeedbackFormPage extends StatefulWidget {
+  const FeedbackFormPage({super.key});
+  @override
+  State<FeedbackFormPage> createState() => _FeedbackFormPageState();
+}
+class _FeedbackFormPageState extends State<FeedbackFormPage> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _nameController;
+  late final TextEditingController _nimController;
+  final TextEditingController _commentController = TextEditingController();
+  String? _submittedResult;
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: MyApp.studentName);
+    _nimController = TextEditingController(text: MyApp.studentId);
+  }
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _nimController.dispose();
+    _commentController.dispose();
+    super.dispose();
+  }
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _submittedResult =
+            'Umpan balik berhasil dikirim oleh ${_nameController.text} (${_nimController.text}):\n"${_commentController.text}"';
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Form Valid! Berhasil mengirim umpan balik.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Form Feedback & Validasi'),
+        backgroundColor: const Color.fromARGB(255, 1, 154, 249),
+        foregroundColor: Colors.white,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Formulir Umpan Balik',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Nama Lengkap',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Nama wajib diisi';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _nimController,
+                decoration: const InputDecoration(
+                  labelText: 'NIM',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.badge),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'NIM wajib diisi';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _commentController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'Komentar / Umpan Balik',
+                  hintText: 'Tuliskan masukan Anda',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.comment),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Komentar wajib diisi';
+                  }
+                  if (value.trim().length < 5) {
+                    return 'Komentar wajib minimal 5 karakter';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton.icon(
+                  onPressed: _submitForm,
+                  icon: const Icon(Icons.send),
+                  label: const Text('Kirim Umpan Balik'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 1, 154, 249),
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ),
+              if (_submittedResult != null) ...[
+                const SizedBox(height: 24),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.green.shade300),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Hasil Pengiriman:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(_submittedResult!),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
   @override
@@ -401,7 +559,7 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             const Text(
-              'NIM: ${MyApp.studentId}',
+              ' ${MyApp.studentId}',
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const Divider(height: 32),
