@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 void main() => runApp(const MyApp());
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -7,19 +6,56 @@ class MyApp extends StatelessWidget {
   static const String studentId = '2415051007';
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 1, 154, 249),),
+),
+      home: const CourseListPage(),
     );
   }
 }
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class CourseListPage extends StatelessWidget {
+  const CourseListPage({super.key});
+  final List<Map<String, dynamic>> courses = const [
+    {
+      'code': 'INF201',
+      'title': 'Pemrograman Mobile',
+      'credits': 3,
+      'status': 'Wajib',
+      'description': 'Mempelajari pengembangan aplikasi mobile lintas platform menggunakan Flutter dan Dart.',
+      'color': Colors.blue,
+    },
+    {
+      'code': 'INF202',
+      'title': 'Pemrograman Web',
+      'credits': 3,
+      'status': 'Wajib',
+      'description': 'Mempelajari konsep web modern, backend Laravel, dan arsitektur MVC.',
+      'color': Colors.teal,
+    },
+    {
+      'code': 'INF203',
+      'title': 'Basis Data',
+      'credits': 3,
+      'status': 'Wajib',
+      'description': 'Mempelajari perancangan ERD, normalisasi, serta pemrosesan query SQL.',
+      'color': Colors.orange,
+    },
+    {
+      'code': 'INF204',
+      'title': 'Struktur Data',
+      'credits': 3,
+      'status': 'Wajib',
+      'description': 'Mempelajari konsep array, stack, queue, tree, graph, dan analisis algoritma.',
+      'color': Colors.purple,
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tahap 7: Home Page'),
+        title: const Text('Tahap 8: Daftar Mata Kuliah'),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
         foregroundColor: Colors.white,
       ),
@@ -51,35 +87,49 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             const Text(
-              'Halaman Utama (HomePage)',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              'Pilih Mata Kuliah untuk Detail:',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Tekan tombol di bawah untuk berpindah ke Detail Page',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const DetailPage(),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListView.builder(
+                itemCount: courses.length,
+                itemBuilder: (context, index) {
+                  final course = courses[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      leading: CircleAvatar(
+                        backgroundColor: course['color'] as Color,
+                        child: Text(
+                          course['code'].toString().substring(0, 3),
+                          style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      title: Text(
+                        course['title'] as String,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text('${course['code']} • ${course['credits']} SKS'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CourseDetailPage(course: course),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
-                icon: const Icon(Icons.arrow_forward),
-                label: const Text('Buka Detail'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo,
-                  foregroundColor: Colors.white,
-                ),
               ),
             ),
           ],
@@ -88,14 +138,20 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-class DetailPage extends StatelessWidget {
-  const DetailPage({super.key});
+
+class CourseDetailPage extends StatelessWidget {
+  final Map<String, dynamic> course;
+
+  const CourseDetailPage({
+    super.key,
+    required this.course,
+  });
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Page'),
-        backgroundColor: Colors.teal,
+        title: Text(course['title'] as String),
+        backgroundColor: course['color'] as Color,
         foregroundColor: Colors.white,
       ),
       body: Padding(
@@ -107,16 +163,16 @@ class DetailPage extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: Colors.teal.shade50,
+                color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: Colors.teal.shade200),
+                border: Border.all(color: Colors.grey.shade300),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
                   Text(
                     'Identitas Mahasiswa:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.teal),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey),
                   ),
                   SizedBox(height: 4),
                   Text(
@@ -126,28 +182,65 @@ class DetailPage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            const Text(
-              'Halaman Detail (DetailPage)',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Anda berada di Detail Page. Anda dapat kembali menggunakan tombol di bawah.',
-              style: TextStyle(color: Colors.grey),
-            ),
             const SizedBox(height: 20),
+            Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Chip(
+                          label: Text(
+                            course['code'] as String,
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                          backgroundColor: course['color'] as Color,
+                        ),
+                        Chip(
+                          label: Text(course['status'] as String),
+                          backgroundColor: Colors.grey.shade200,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      course['title'] as String,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Beban SKS: ${course['credits']} SKS',
+                      style: const TextStyle(fontSize: 14, color: Colors.black87),
+                    ),
+                    const Divider(height: 24),
+                    const Text(
+                      'Deskripsi Mata Kuliah:',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      course['description'] as String,
+                      style: const TextStyle(color: Colors.black87, height: 1.4),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Spacer(),
             SizedBox(
               width: double.infinity,
               height: 48,
               child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.arrow_back),
-                label: const Text('Kembali ke Home'),
+                label: const Text('Kembali ke Daftar'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
+                  backgroundColor: course['color'] as Color,
                   foregroundColor: Colors.white,
                 ),
               ),
