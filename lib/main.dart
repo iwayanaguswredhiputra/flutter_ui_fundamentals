@@ -32,21 +32,62 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.school), label: 'Courses'),
-          NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 600) {
+          return Scaffold(
+            body: _pages[_selectedIndex],
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              destinations: const [
+                NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+                NavigationDestination(icon: Icon(Icons.school), label: 'Courses'),
+                NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
+              ],
+            ),
+          );
+        }
+        return Scaffold(
+          body: Row(
+            children: [
+              SafeArea(
+                child: NavigationRail(
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: (index) {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                  labelType: NavigationRailLabelType.all,
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.home),
+                      label: Text('Home'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.school),
+                      label: Text('Courses'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.person),
+                      label: Text('Profile'),
+                    ),
+                  ],
+                ),
+              ),
+              const VerticalDivider(thickness: 1, width: 1),
+              Expanded(
+                child: _pages[_selectedIndex],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -56,14 +97,14 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tahap 10: Home'),
+        title: const Text('Tahap 11: Adaptive NavBar'),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
         foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, 
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: double.infinity,
@@ -78,23 +119,29 @@ class HomePage extends StatelessWidget {
                 children: [
                   Text(
                     'Identitas Mahasiswa:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.blue),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: Colors.blue,
+                    ),
                   ),
                   SizedBox(height: 4),
                   Text(
                     '${MyApp.studentId} - ${MyApp.studentName}',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
             const Text(
-              'Selamat Datang!',
+              'Selamat Datang di Home Page',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            const Text('Gunakan Navigation Bar di bawah untuk berpindah ke daftar mata kuliah atau melihat profil.'),
           ],
         ),
       ),
@@ -109,7 +156,8 @@ class CourseListPage extends StatelessWidget {
       'title': 'Pemrograman Mobile',
       'credits': 3,
       'status': 'Wajib',
-      'description': 'Mempelajari pengembangan aplikasi mobile lintas platform menggunakan Flutter dan Dart.',
+      'description':
+          'Mempelajari pengembangan aplikasi mobile lintas platform menggunakan Flutter dan Dart.',
       'color': Colors.blue,
     },
     {
@@ -117,7 +165,8 @@ class CourseListPage extends StatelessWidget {
       'title': 'Pemrograman Web',
       'credits': 3,
       'status': 'Wajib',
-      'description': 'Mempelajari konsep web modern, backend Laravel, dan arsitektur MVC.',
+      'description':
+          'Mempelajari konsep web modern, backend Laravel, dan arsitektur MVC.',
       'color': Colors.teal,
     },
     {
@@ -125,7 +174,8 @@ class CourseListPage extends StatelessWidget {
       'title': 'Basis Data',
       'credits': 3,
       'status': 'Wajib',
-      'description': 'Mempelajari perancangan ERD, normalisasi, serta pemrosesan query SQL.',
+      'description':
+          'Mempelajari perancangan ERD, normalisasi, serta pemrosesan query SQL.',
       'color': Colors.orange,
     },
     {
@@ -133,7 +183,8 @@ class CourseListPage extends StatelessWidget {
       'title': 'Struktur Data',
       'credits': 3,
       'status': 'Wajib',
-      'description': 'Mempelajari konsep array, stack, queue, tree, graph, dan analisis algoritma.',
+      'description':
+          'Mempelajari konsep array, stack, queue, tree, graph, dan analisis algoritma.',
       'color': Colors.purple,
     },
   ];
@@ -158,21 +209,34 @@ class CourseListPage extends StatelessWidget {
                   backgroundColor: course['color'] as Color,
                   child: Text(
                     course['code'].toString().substring(0, 3),
-                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                title: Text(course['title'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text('${course['code']} • ${course['credits']} SKS'),
+                title: Text(
+                  course['title'] as String,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  '${course['code']} • ${course['credits']} SKS',
+                ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () async {
                   final result = await Navigator.push<bool>(
                     context,
-                    MaterialPageRoute(builder: (_) => CourseDetailPage(course: course)),
+                    MaterialPageRoute(
+                      builder: (_) => CourseDetailPage(course: course),
+                    ),
                   );
                   if (result == true && context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Mata kuliah "${course['title']}" berhasil difavoritkan!'),
+                        content: Text(
+                          'Mata kuliah "${course['title']}" berhasil difavoritkan!',
+                        ),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -202,7 +266,10 @@ class CourseDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Beban SKS: ${course['credits']} SKS', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              'Beban SKS: ${course['credits']} SKS',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             Text(course['description'] as String),
             const Spacer(),
@@ -212,7 +279,7 @@ class CourseDetailPage extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () => Navigator.pop(context, true),
                 icon: const Icon(Icons.favorite),
-                label: const Text('Pilih / Favoritkan'),
+                label: const Text('Pilih favorit'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.pink,
                   foregroundColor: Colors.white,
@@ -252,7 +319,7 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             const Text(
-              '${MyApp.studentId}',
+              'NIM: ${MyApp.studentId}',
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const Divider(height: 32),
