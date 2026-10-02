@@ -97,7 +97,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tahap 11: Adaptive NavBar'),
+        title: const Text('Tahap 12: Interaction & Feedback'),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
         foregroundColor: Colors.white,
       ),
@@ -148,8 +148,13 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-class CourseListPage extends StatelessWidget {
+class CourseListPage extends StatefulWidget {
   const CourseListPage({super.key});
+  @override
+  State<CourseListPage> createState() => _CourseListPageState();
+}
+class _CourseListPageState extends State<CourseListPage> {
+  final Set<String> _favoriteCourseCodes = {};
   final List<Map<String, dynamic>> courses = const [
     {
       'code': 'INF201',
@@ -188,6 +193,35 @@ class CourseListPage extends StatelessWidget {
       'color': Colors.purple,
     },
   ];
+  void _toggleFavorite(String code) {
+    setState(() {
+      if (_favoriteCourseCodes.contains(code)) {
+        _favoriteCourseCodes.remove(code);
+      } else {
+        _favoriteCourseCodes.add(code);
+      }
+    });
+  }
+  void _showQuickInfoDialog(BuildContext context, Map<String, dynamic> course) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Info Cepat: ${course['code']}'),
+        content: Text(
+          'Mata Kuliah: ${course['title']}\n'
+          'SKS: ${course['credits']} SKS\n'
+          'Status: ${course['status']}\n\n'
+          'Keterangan: Dialog ini dipicu oleh gestur Long Press via GestureDetector.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Tutup'),
+          ),
+        ],
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -202,10 +236,56 @@ class CourseListPage extends StatelessWidget {
           itemCount: courses.length,
           itemBuilder: (context, index) {
             final course = courses[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ListTile(
-                leading: CircleAvatar(
+            final isFavorite = _favoriteCourseCodes.contains(course['code']);
+            return CourseCard(
+              course: course,
+              isFavorite: isFavorite,
+              onFavoriteToggle: () => _toggleFavorite(course['code'] as String),
+              onLongPressInfo: () => _showQuickInfoDialog(context, course),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+class CourseCard extends StatelessWidget {
+  final Map<String, dynamic> course;
+  final bool isFavorite;
+  final VoidCallback onFavoriteToggle;
+  final VoidCallback onLongPressInfo;
+  const CourseCard({
+    super.key,
+    required this.course,
+    required this.isFavorite,
+    required this.onFavoriteToggle,
+    required this.onLongPressInfo,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      clipBehavior: Clip.antiAlias,
+      child: GestureDetector(
+        onLongPress: onLongPressInfo,
+        child: InkWell(
+          onTap: () async {
+            final result = await Navigator.push<bool>(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CourseDetailPage(course: course),
+              ),
+            );
+
+            if (result == true && context.mounted) {
+              onFavoriteToggle();
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                CircleAvatar(
                   backgroundColor: course['color'] as Color,
                   child: Text(
                     course['code'].toString().substring(0, 3),
@@ -216,35 +296,37 @@ class CourseListPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                title: Text(
-                  course['title'] as String,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  '${course['code']} • ${course['credits']} SKS',
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  final result = await Navigator.push<bool>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => CourseDetailPage(course: course),
-                    ),
-                  );
-                  if (result == true && context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Mata kuliah "${course['title']}" berhasil difavoritkan!',
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        course['title'] as String,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
-                        backgroundColor: Colors.green,
                       ),
-                    );
-                  }
-                },
-              ),
-            );
-          },
+                      const SizedBox(height: 4),
+                      Text(
+                        '${course['code']} • ${course['credits']} SKS',
+                        style: TextStyle(color: Colors.grey.shade700),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : Colors.grey,
+                  ),
+                  onPressed: onFavoriteToggle,
+                  tooltip: 'Favorit',
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -279,7 +361,7 @@ class CourseDetailPage extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () => Navigator.pop(context, true),
                 icon: const Icon(Icons.favorite),
-                label: const Text('Pilih favorit'),
+                label: const Text('Pilih Favorit'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.pink,
                   foregroundColor: Colors.white,
