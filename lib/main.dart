@@ -8,8 +8,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 1, 154, 249),),
-),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 1, 154, 249)),
+      ),
       home: const CourseListPage(),
     );
   }
@@ -50,12 +51,11 @@ class CourseListPage extends StatelessWidget {
       'color': Colors.purple,
     },
   ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tahap 8: Daftar Mata Kuliah'),
+        title: const Text('Tahap 9: Returning Data'),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
         foregroundColor: Colors.white,
       ),
@@ -68,16 +68,16 @@ class CourseListPage extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: Colors.indigo.shade50,
+                color: Colors.blue.shade50,
                 borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(color: Colors.indigo.shade200),
+                border: Border.all(color: Colors.blue.shade200),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
                   Text(
                     'Identitas Mahasiswa:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.indigo),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.blue),
                   ),
                   SizedBox(height: 4),
                   Text(
@@ -89,7 +89,7 @@ class CourseListPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             const Text(
-              'Pilih Mata Kuliah untuk Detail:',
+              'Pilih Mata Kuliah:',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 12),
@@ -119,13 +119,23 @@ class CourseListPage extends StatelessWidget {
                       ),
                       subtitle: Text('${course['code']} • ${course['credits']} SKS'),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        final result = await Navigator.push<bool>(
                           context,
                           MaterialPageRoute(
                             builder: (_) => CourseDetailPage(course: course),
                           ),
                         );
+                        if (result == true && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Mata kuliah "${course['title']}" berhasil difavoritkan!'),
+                              backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        }
                       },
                     ),
                   );
@@ -138,10 +148,8 @@ class CourseListPage extends StatelessWidget {
     );
   }
 }
-
 class CourseDetailPage extends StatelessWidget {
   final Map<String, dynamic> course;
-
   const CourseDetailPage({
     super.key,
     required this.course,
@@ -215,7 +223,7 @@ class CourseDetailPage extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       'Beban SKS: ${course['credits']} SKS',
-                      style: const TextStyle(fontSize: 14, color: Colors.black87),
+                     style: const TextStyle(fontSize: 14, color: Colors.black87),
                     ),
                     const Divider(height: 24),
                     const Text(
@@ -236,13 +244,25 @@ class CourseDetailPage extends StatelessWidget {
               width: double.infinity,
               height: 48,
               child: ElevatedButton.icon(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Kembali ke Daftar'),
+                onPressed: () {
+                  Navigator.pop(context, true); 
+                },
+                icon: const Icon(Icons.favorite),
+                label: const Text('Pilih Favorit'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: course['color'] as Color,
+                  backgroundColor: Colors.pink,
                   foregroundColor: Colors.white,
                 ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton.icon(
+                onPressed: () => Navigator.pop(context, false),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Kembali Tanpa Memilih'),
               ),
             ),
           ],
