@@ -103,7 +103,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tahap 13: Form Input & Validasi'),
+        title: const Text('Tahap 14: SnackBar & Dialog'),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
         foregroundColor: Colors.white,
       ),
@@ -148,6 +148,9 @@ class HomePage extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
+            const Text(
+              'Tahap ini menambahkan SnackBar, AlertDialog konfirmasi, serta CircularProgressIndicator untuk umpan balik interaksi pengguna.',
+            ),
           ],
         ),
       ),
@@ -216,7 +219,7 @@ class _CourseListPageState extends State<CourseListPage> {
         content: Text(
           'Mata Kuliah: ${course['title']}\n'
           'SKS: ${course['credits']} SKS\n'
-          'Status: ${course['status']}\n\n'
+          'Status: ${course['status']}\n',
         ),
         actions: [
           TextButton(
@@ -388,6 +391,7 @@ class _FeedbackFormPageState extends State<FeedbackFormPage> {
   late final TextEditingController _nameController;
   late final TextEditingController _nimController;
   final TextEditingController _commentController = TextEditingController();
+  bool _isLoading = false;
   String? _submittedResult;
   @override
   void initState() {
@@ -404,23 +408,64 @@ class _FeedbackFormPageState extends State<FeedbackFormPage> {
   }
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _submittedResult =
-            'Umpan balik berhasil dikirim oleh ${_nameController.text} (${_nimController.text}):\n"${_commentController.text}"';
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Form Valid! Berhasil mengirim umpan balik.'),
-          backgroundColor: Colors.green,
+      showDialog(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Konfirmasi Pengiriman'),
+          content: Text(
+            'Apakah Anda yakin ingin mengirim umpan balik ini?\n\n'
+            'Pengirim: ${_nameController.text} (${_nimController.text})',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                _processSubmission();
+              },
+              child: const Text('Ya, Kirim'),
+            ),
+          ],
         ),
       );
     }
+  }
+  Future<void> _processSubmission() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
+      _submittedResult =
+          'Umpan balik berhasil dikirim oleh ${_nameController.text} (${_nimController.text}):\n"${_commentController.text}"';
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Umpan balik dari ${MyApp.studentName} (${MyApp.studentId}) berhasil disimpan!',
+        ),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'OK',
+          textColor: Colors.white,
+          onPressed: () {},
+        ),
+      ),
+    );
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Form Feedback & Validasi'),
+        title: const Text('Form Feedback'),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
         foregroundColor: Colors.white,
       ),
@@ -489,14 +534,36 @@ class _FeedbackFormPageState extends State<FeedbackFormPage> {
               SizedBox(
                 width: double.infinity,
                 height: 48,
-                child: ElevatedButton.icon(
-                  onPressed: _submitForm,
-                  icon: const Icon(Icons.send),
-                  label: const Text('Kirim Umpan Balik'),
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 1, 154, 249),
                     foregroundColor: Colors.white,
                   ),
+                  child: _isLoading
+                      ? const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Text('Memproses...'),
+                          ],
+                        )
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.send),
+                            SizedBox(width: 8),
+                            Text('Kirim Umpan Balik'),
+                          ],
+                        ),
                 ),
               ),
               if (_submittedResult != null) ...[
@@ -559,7 +626,7 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             const Text(
-              ' ${MyApp.studentId}',
+              MyApp.studentId,
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const Divider(height: 32),
