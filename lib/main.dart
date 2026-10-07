@@ -4,19 +4,20 @@ void main() {
 }
 class CourseExplorerApp extends StatelessWidget {
   const CourseExplorerApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Pertemuan 6 - Tahap 2',
-      theme: ThemeData( colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 1, 154, 249),),
+      title: 'Pertemuan 6 - Tahap 3',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
       home: const CourseExplorerScreen(),
     );
   }
 }
+
 class CourseExplorerScreen extends StatefulWidget {
   const CourseExplorerScreen({super.key});
   @override
@@ -35,6 +36,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final List<String> allCourses = [
@@ -45,13 +47,14 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('P06: Prop Drilling & State Ownership',
-        style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,),),
+        title: const Text(
+          'P06: Tahap 3 - Lifting State Up & Single Source of Truth',
+          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
       ),
       body: Column(
         children: [
-          // Banner Identitas Mahasiswa
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
@@ -83,6 +86,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
     );
   }
 }
+
 class CourseSummary extends StatelessWidget {
   final int favoriteCount;
   const CourseSummary({super.key, required this.favoriteCount});
@@ -110,7 +114,6 @@ class CourseSummary extends StatelessWidget {
     );
   }
 }
-//Nama : I Wayan Agus Wredhi Putra NIM : 2415051007
 class CourseList extends StatelessWidget {
   final List<String> courses;
   final List<String> favoriteCourses;
@@ -131,25 +134,23 @@ class CourseList extends StatelessWidget {
         return CourseCard(
           title: course,
           isFavorite: isFav,
-          onFavoriteTap: () => onToggleFavorite(course),
+          onFavoriteChanged: () => onToggleFavorite(course),
         );
       },
     );
   }
 }
-
+//2415051007 - I Wayan Agus Wredhi Putra
 class CourseCard extends StatelessWidget {
   final String title;
   final bool isFavorite;
-  final VoidCallback onFavoriteTap;
-
+  final VoidCallback onFavoriteChanged;
   const CourseCard({
     super.key,
     required this.title,
     required this.isFavorite,
-    required this.onFavoriteTap,
+    required this.onFavoriteChanged,
   });
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -161,7 +162,7 @@ class CourseCard extends StatelessWidget {
             isFavorite ? Icons.favorite : Icons.favorite_border,
             color: isFavorite ? Colors.red : Colors.grey,
           ),
-          onPressed: onFavoriteTap,
+          onPressed: onFavoriteChanged,
         ),
       ),
     );
