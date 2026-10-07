@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+
 void main() {
   runApp(const CourseExplorerApp());
 }
+
 class CourseExplorerApp extends StatelessWidget {
   const CourseExplorerApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Pertemuan 6 - Tahap 3',
+      title: 'Pertemuan 6 - Tahap 4',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
@@ -26,6 +29,7 @@ class CourseExplorerScreen extends StatefulWidget {
 class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
   final String studentName = "I Wayan Agus Wredhi Putra";
   final String studentId = "2415051007";
+  final ValueNotifier<int> favoriteCountNotifier = ValueNotifier<int>(0);
   final List<String> _favoriteCourses = [];
   void _toggleFavorite(String courseTitle) {
     setState(() {
@@ -35,6 +39,12 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
         _favoriteCourses.add(courseTitle);
       }
     });
+    favoriteCountNotifier.value = _favoriteCourses.length;
+  }
+  @override
+  void dispose() {
+    favoriteCountNotifier.dispose();
+    super.dispose();
   }
 
   @override
@@ -45,10 +55,11 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
       "Pengolahan Citra Digital",
       "Jaringan Komputer",
     ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'P06: Tahap 3 - Lifting State Up & Single Source of Truth',
+          'P06: Tahap 4 - ValueNotifier & ValueListenableBuilder',
           style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
@@ -72,98 +83,57 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
               ],
             ),
           ),
-          CourseSummary(favoriteCount: _favoriteCourses.length),
+
+//2415051007 - I Wayan Agus Wredhi Putra
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.amber.shade100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Total Course Favorit:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                ValueListenableBuilder<int>(
+                  valueListenable: favoriteCountNotifier,
+                  builder: (context, count, child) {
+                    return Chip(
+                      avatar: const Icon(Icons.favorite, color: Colors.red, size: 18),
+                      label: Text(
+                        '$count Item',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
           const Divider(height: 1),
           Expanded(
-            child: CourseList(
-              courses: allCourses,
-              favoriteCourses: _favoriteCourses,
-              onToggleFavorite: _toggleFavorite,
+            child: ListView.builder(
+              itemCount: allCourses.length,
+              itemBuilder: (context, index) {
+                final course = allCourses[index];
+                final isFav = _favoriteCourses.contains(course);
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: ListTile(
+                    title: Text(course),
+                    trailing: IconButton(
+                      icon: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : Colors.grey,
+                      ),
+                      onPressed: () => _toggleFavorite(course),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class CourseSummary extends StatelessWidget {
-  final int favoriteCount;
-  const CourseSummary({super.key, required this.favoriteCount});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: Colors.amber.shade100,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Total Course Favorit:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Chip(
-            avatar: const Icon(Icons.favorite, color: Colors.red, size: 18),
-            label: Text(
-              '$favoriteCount Item',
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-class CourseList extends StatelessWidget {
-  final List<String> courses;
-  final List<String> favoriteCourses;
-  final Function(String) onToggleFavorite;
-  const CourseList({
-    super.key,
-    required this.courses,
-    required this.favoriteCourses,
-    required this.onToggleFavorite,
-  });
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: courses.length,
-      itemBuilder: (context, index) {
-        final course = courses[index];
-        final isFav = favoriteCourses.contains(course);
-        return CourseCard(
-          title: course,
-          isFavorite: isFav,
-          onFavoriteChanged: () => onToggleFavorite(course),
-        );
-      },
-    );
-  }
-}
-//2415051007 - I Wayan Agus Wredhi Putra
-class CourseCard extends StatelessWidget {
-  final String title;
-  final bool isFavorite;
-  final VoidCallback onFavoriteChanged;
-  const CourseCard({
-    super.key,
-    required this.title,
-    required this.isFavorite,
-    required this.onFavoriteChanged,
-  });
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: ListTile(
-        title: Text(title),
-        trailing: IconButton(
-          icon: Icon(
-            isFavorite ? Icons.favorite : Icons.favorite_border,
-            color: isFavorite ? Colors.red : Colors.grey,
-          ),
-          onPressed: onFavoriteChanged,
-        ),
       ),
     );
   }
