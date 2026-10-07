@@ -1,78 +1,168 @@
 import 'package:flutter/material.dart';
 void main() {
-  runApp(const MyApp());
+  runApp(const CourseExplorerApp());
 }
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class CourseExplorerApp extends StatelessWidget {
+  const CourseExplorerApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Course Explorer - Tahap 1',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const CourseExplorerApp(),
+      title: 'Pertemuan 6 - Tahap 2',
+      theme: ThemeData( colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 1, 154, 249),),
+        useMaterial3: true,
+      ),
+      home: const CourseExplorerScreen(),
     );
   }
 }
-class CourseExplorerApp extends StatefulWidget {
-  const CourseExplorerApp({super.key});
-
+class CourseExplorerScreen extends StatefulWidget {
+  const CourseExplorerScreen({super.key});
   @override
-  State<CourseExplorerApp> createState() => _CourseExplorerAppState();
+  State<CourseExplorerScreen> createState() => _CourseExplorerScreenState();
 }
-class _CourseExplorerAppState extends State<CourseExplorerApp> {
-  int _selectedIndex = 0; 
-  bool _isFavorite = false; 
-  final String studentName = 'I Wayan Agus Wredhi Putra';
-  final String studentId = '2415051007';
+class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
+  final String studentName = "I Wayan Agus Wredhi Putra";
+  final String studentId = "2415051007";
+  final List<String> _favoriteCourses = [];
+  void _toggleFavorite(String courseTitle) {
+    setState(() {
+      if (_favoriteCourses.contains(courseTitle)) {
+        _favoriteCourses.remove(courseTitle);
+      } else {
+        _favoriteCourses.add(courseTitle);
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
+    final List<String> allCourses = [
+      "Pemrograman Mobile",
+      "Pengembangan Web",
+      "Pengolahan Citra Digital",
+      "Jaringan Komputer",
+    ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Local State - Course Explorer'),
-        backgroundColor: Colors.blue.shade100,
+        title: const Text('P06: Prop Drilling & State Ownership',
+        style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,),),
+        backgroundColor: const Color.fromARGB(255, 1, 154, 249),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '$studentName\n($studentId)',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      body: Column(
+        children: [
+          // Banner Identitas Mahasiswa
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            color: Colors.indigo.shade50,
+            child: Column(
+              children: [
+                Text(
+                  studentName,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                Text(
+                  'NIM: $studentId',
+                  style: TextStyle(color: Colors.grey.shade700),
+                ),
+              ],
             ),
-            const SizedBox(height: 40),
-            const Text('Local State : Toggle Favorite'),
-            IconButton(
-              icon: Icon(
-                _isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: _isFavorite ? Colors.red : Colors.grey,
-                size: 50,
-              ),
-              onPressed: () {
-                setState(() {
-                  _isFavorite = !_isFavorite;
-                });
-              },
+          ),
+          CourseSummary(favoriteCount: _favoriteCourses.length),
+          const Divider(height: 1),
+          Expanded(
+            child: CourseList(
+              courses: allCourses,
+              favoriteCourses: _favoriteCourses,
+              onToggleFavorite: _toggleFavorite,
             ),
-            Text(_isFavorite ? 'Status: Favorit' : 'Status: Belum Favorit'),
-            const SizedBox(height: 40),
-            Text('Tab Aktif (Local State): $_selectedIndex'),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Courses'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          ),
         ],
+      ),
+    );
+  }
+}
+class CourseSummary extends StatelessWidget {
+  final int favoriteCount;
+  const CourseSummary({super.key, required this.favoriteCount});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      color: Colors.amber.shade100,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'Total Course Favorit:',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Chip(
+            avatar: const Icon(Icons.favorite, color: Colors.red, size: 18),
+            label: Text(
+              '$favoriteCount Item',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+//Nama : I Wayan Agus Wredhi Putra NIM : 2415051007
+class CourseList extends StatelessWidget {
+  final List<String> courses;
+  final List<String> favoriteCourses;
+  final Function(String) onToggleFavorite;
+  const CourseList({
+    super.key,
+    required this.courses,
+    required this.favoriteCourses,
+    required this.onToggleFavorite,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: courses.length,
+      itemBuilder: (context, index) {
+        final course = courses[index];
+        final isFav = favoriteCourses.contains(course);
+        return CourseCard(
+          title: course,
+          isFavorite: isFav,
+          onFavoriteTap: () => onToggleFavorite(course),
+        );
+      },
+    );
+  }
+}
+
+class CourseCard extends StatelessWidget {
+  final String title;
+  final bool isFavorite;
+  final VoidCallback onFavoriteTap;
+
+  const CourseCard({
+    super.key,
+    required this.title,
+    required this.isFavorite,
+    required this.onFavoriteTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: ListTile(
+        title: Text(title),
+        trailing: IconButton(
+          icon: Icon(
+            isFavorite ? Icons.favorite : Icons.favorite_border,
+            color: isFavorite ? Colors.red : Colors.grey,
+          ),
+          onPressed: onFavoriteTap,
+        ),
       ),
     );
   }
