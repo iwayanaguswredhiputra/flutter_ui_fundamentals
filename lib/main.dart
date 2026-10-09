@@ -1,7 +1,13 @@
-import 'course_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'course_state.dart';
 void main() {
-  runApp(const CourseExplorerApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CourseState(),
+      child: const CourseExplorerApp(),
+    ),
+  );
 }
 class CourseExplorerApp extends StatelessWidget {
   const CourseExplorerApp({super.key});
@@ -9,7 +15,7 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Pertemuan 6 - Tahap 5',
+      title: 'Pertemuan 6 - Tahap 6',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
@@ -18,20 +24,10 @@ class CourseExplorerApp extends StatelessWidget {
     );
   }
 }
-class CourseExplorerScreen extends StatefulWidget {
+class CourseExplorerScreen extends StatelessWidget {
   const CourseExplorerScreen({super.key});
-  @override
-  State<CourseExplorerScreen> createState() => _CourseExplorerScreenState();
-}
-class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
   final String studentName = "I Wayan Agus Wredhi Putra";
   final String studentId = "2415051007";
-  final CourseState courseState = CourseState();
-  @override
-  void dispose() {
-    courseState.dispose();
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     final List<String> allCourses = [
@@ -43,7 +39,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'P06: Tahap 5 - ChangeNotifier & notifyListeners',
+          'P06: Tahap 6 - Provider di Widget Tree',
           style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
@@ -67,9 +63,8 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
               ],
             ),
           ),
-          ListenableBuilder(
-            listenable: courseState,
-            builder: (context, child) {
+          Consumer<CourseState>(
+            builder: (context, courseState, child) {
               return Container(
                 padding: const EdgeInsets.all(16),
                 color: Colors.amber.shade100,
@@ -94,9 +89,8 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
           ),
           const Divider(height: 1),
           Expanded(
-            child: ListenableBuilder(
-              listenable: courseState,
-              builder: (context, child) {
+            child: Consumer<CourseState>(
+              builder: (context, courseState, child) {
                 return ListView.builder(
                   itemCount: allCourses.length,
                   itemBuilder: (context, index) {
