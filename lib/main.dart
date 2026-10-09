@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'course_state.dart';
 import 'repositories/course_repository.dart';
 import 'services/course_service.dart';
+import 'providers/course_provider.dart';
 void main() {
   final courseService = CourseService();
   final courseRepository = CourseRepository(courseService);
   runApp(
     ChangeNotifierProvider(
-      create: (_) => CourseState(courseRepository)..fetchCourses(),
+      create: (_) => CourseProvider(courseRepository)..loadCourses(),
       child: const CourseExplorerApp(),
     ),
   );
@@ -19,7 +19,7 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Pertemuan 6 - Tahap 10',
+      title: 'Pertemuan 6 - Tahap 11',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
@@ -34,11 +34,11 @@ class CourseExplorerScreen extends StatelessWidget {
   final String studentId = "2415051007";
   @override
   Widget build(BuildContext context) {
-    final courseStateWatch = context.watch<CourseState>();
+    final providerWatch = context.watch<CourseProvider>();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'P06: Tahap 10 - Repository Pattern',
+          'P06: Tahap 11 - Async State Management',
           style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
@@ -75,7 +75,7 @@ class CourseExplorerScreen extends StatelessWidget {
                 Chip(
                   avatar: const Icon(Icons.favorite, color: Colors.red, size: 18),
                   label: Text(
-                    '${courseStateWatch.favoriteCount} Item',
+                    '${providerWatch.favoriteCount} Item',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -83,36 +83,74 @@ class CourseExplorerScreen extends StatelessWidget {
             ),
           ),
           const Divider(height: 1),
+          //2415051007 - I Wayan Agus Wredhi Putra
           Expanded(
-            child: courseStateWatch.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: courseStateWatch.courses.length,
-                    itemBuilder: (context, index) {
-                      final course = courseStateWatch.courses[index];
-                      return Consumer<CourseState>(
-                        builder: (context, courseState, child) {
-                          final isFav = courseState.isFavorite(course.code);
-                          return Card(
-                            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            child: ListTile(
-                              title: Text('${course.title} (${course.code})'),
-                              subtitle: Text('${course.credits} SKS | Status: ${course.status}'),
-                              trailing: IconButton(
-                                icon: Icon(
-                                  isFav ? Icons.favorite : Icons.favorite_border,
-                                  color: isFav ? Colors.red : Colors.grey,
-                                ),
-                                onPressed: () {
-                                  context.read<CourseState>().toggleFavorite(course.code);
-                                },
+            child: Builder(
+              builder: (context) {
+                if (providerWatch.isLoading) {
+                  return const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 12),
+                        Text('Memuat data mata kuliah...'),
+                      ],
+                    ),
+                  );
+                }
+                if (providerWatch.error != null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                        const SizedBox(height: 12),
+                        Text(
+                          providerWatch.error!,
+                          style: const TextStyle(color: Colors.red),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.read<CourseProvider>().loadCourses();
+                          },
+                          child: const Text('Coba Lagi'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: providerWatch.courses.length,
+                  itemBuilder: (context, index) {
+                    final course = providerWatch.courses[index];
+                    return Consumer<CourseProvider>(
+                      builder: (context, provider, child) {
+                        final isFav = provider.isFavorite(course.code);
+                        return Card(
+                          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          child: ListTile(
+                            title: Text('${course.title} (${course.code})'),
+                            subtitle: Text('${course.credits} SKS | Status: ${course.status}'),
+                            trailing: IconButton(
+                              icon: Icon(
+                                isFav ? Icons.favorite : Icons.favorite_border,
+                                color: isFav ? Colors.red : Colors.grey,
                               ),
+                              onPressed: () {
+                                context.read<CourseProvider>().toggleFavorite(course.code);
+                              },
                             ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
