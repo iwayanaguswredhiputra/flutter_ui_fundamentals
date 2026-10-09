@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'course_state.dart';
+import 'repositories/course_repository.dart';
+import 'services/course_service.dart';
 void main() {
+  final courseService = CourseService();
+  final courseRepository = CourseRepository(courseService);
   runApp(
     ChangeNotifierProvider(
-      create: (_) => CourseState()..fetchCourses(),
+      create: (_) => CourseState(courseRepository)..fetchCourses(),
       child: const CourseExplorerApp(),
     ),
   );
@@ -15,7 +19,7 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Pertemuan 6 - Tahap 9',
+      title: 'Pertemuan 6 - Tahap 10',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
@@ -34,7 +38,7 @@ class CourseExplorerScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'P06: Tahap 9 - CourseService Data Source',
+          'P06: Tahap 10 - Repository Pattern',
           style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),

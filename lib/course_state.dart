@@ -1,9 +1,10 @@
 // 2415051007 - I Wayan Agus Wredhi Putra
 import 'package:flutter/material.dart';
 import 'models/course.dart';
-import 'services/course_service.dart';
+import 'repositories/course_repository.dart';
 class CourseState extends ChangeNotifier {
-  final CourseService _courseService = CourseService();
+  final CourseRepository _repository;
+  CourseState(this._repository);
   List<Course> _courses = [];
   final Set<String> _favorites = {};
   bool _isLoading = false;
@@ -15,7 +16,7 @@ class CourseState extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      _courses = await _courseService.loadCourses();
+      _courses = await _repository.getCourses();
     } catch (e) {
       debugPrint('Error loading courses: $e');
     } finally {
