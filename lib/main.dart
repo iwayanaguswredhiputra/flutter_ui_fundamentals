@@ -15,7 +15,7 @@ class CourseExplorerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Pertemuan 6 - Tahap 6',
+      title: 'Pertemuan 6 - Tahap 7',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
@@ -36,10 +36,11 @@ class CourseExplorerScreen extends StatelessWidget {
       "Pengolahan Citra Digital",
       "Jaringan Komputer",
     ];
+    final courseStateWatch = context.watch<CourseState>();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'P06: Tahap 6 - Provider di Widget Tree',
+          'P06: Tahap 7 - watch, read & Consumer',
           style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
@@ -63,38 +64,36 @@ class CourseExplorerScreen extends StatelessWidget {
               ],
             ),
           ),
-          Consumer<CourseState>(
-            builder: (context, courseState, child) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                color: Colors.amber.shade100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Total Course Favorit:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    Chip(
-                      avatar: const Icon(Icons.favorite, color: Colors.red, size: 18),
-                      label: Text(
-                        '${courseState.favoriteCount} Item',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.amber.shade100,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Total Course Favorit:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-              );
-            },
+                Chip(
+                  avatar: const Icon(Icons.favorite, color: Colors.red, size: 18),
+                  label: Text(
+                    '${courseStateWatch.favoriteCount} Item',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
           ),
+
           const Divider(height: 1),
           Expanded(
-            child: Consumer<CourseState>(
-              builder: (context, courseState, child) {
-                return ListView.builder(
-                  itemCount: allCourses.length,
-                  itemBuilder: (context, index) {
-                    final course = allCourses[index];
+            child: ListView.builder(
+              itemCount: allCourses.length,
+              itemBuilder: (context, index) {
+                final course = allCourses[index];
+//2415051007 - I Wayan Agus Wredhi Putra
+                return Consumer<CourseState>(
+                  builder: (context, courseState, child) {
                     final isFav = courseState.isFavorite(course);
                     return Card(
                       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -106,7 +105,7 @@ class CourseExplorerScreen extends StatelessWidget {
                             color: isFav ? Colors.red : Colors.grey,
                           ),
                           onPressed: () {
-                            courseState.toggleFavorite(course);
+                            context.read<CourseState>().toggleFavorite(course);
                           },
                         ),
                       ),
