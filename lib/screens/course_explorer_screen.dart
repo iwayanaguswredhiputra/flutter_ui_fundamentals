@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/course_provider.dart';
 import '../widgets/course_card.dart';
-
+import '../screens/favorites_screen.dart';
 class CourseExplorerScreen extends StatelessWidget {
   const CourseExplorerScreen({super.key});
   final String studentName = "I Wayan Agus Wredhi Putra";
@@ -14,10 +14,24 @@ class CourseExplorerScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'P06: Tahap 12 - Refactor Struktur Folder',
+          'P06: Tahap 13 - Shared Favorites',
           style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
+        actions: [
+          TextButton.icon(
+            style: TextButton.styleFrom(foregroundColor: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FavoritesScreen()),
+              );
+            },
+            icon: const Icon(Icons.favorite, color: Colors.redAccent),
+            label: const Text('Favorit Saya', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: Column(
         children: [

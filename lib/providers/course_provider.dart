@@ -10,6 +10,9 @@ class CourseProvider extends ChangeNotifier {
   String? error;
   final Set<String> favorites = {};
   int get favoriteCount => favorites.length;
+  List<Course> get favoriteCourses {
+    return courses.where((course) => favorites.contains(course.code)).toList();
+  }
   Future<void> loadCourses() async {
     isLoading = true;
     error = null;

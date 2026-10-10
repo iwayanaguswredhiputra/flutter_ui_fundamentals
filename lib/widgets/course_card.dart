@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/course.dart';
 import '../providers/course_provider.dart';
-
+import '../screens/course_detail_screen.dart';
 class CourseCard extends StatelessWidget {
   const CourseCard({super.key, required this.course});
   final Course course;
@@ -26,6 +26,14 @@ class CourseCard extends StatelessWidget {
                 provider.toggleFavorite(course.code);
               },
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CourseDetailScreen(course: course),
+                ),
+              );
+            },
           ),
         );
       },
