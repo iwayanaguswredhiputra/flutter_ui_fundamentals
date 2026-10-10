@@ -1,17 +1,17 @@
-# flutter_ui_fundamentals
+# Course Explorer v2
 
-A new Flutter project.
+**Nama:** I Wayan Agus Wredhi Putra  
+**NIM:** 2415051007  
+**Program Studi:** Pendidikan Teknik Informatika  
+**Universitas:** Universitas Pendidikan Ganesha  
 
-## Getting Started
+## Deskripsi Proyek
+Proyek aplikasi *Course Explorer v2* dikembangkan dengan menerapkan pola **Clean Architecture** dan manajemen *state* reaktif menggunakan `Provider` untuk memastikan pemisahan tanggung jawab (*separation of concerns*) yang terstruktur dengan baik.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Struktur Folder & Tanggung Jawab (Clean Architecture)
+- `lib/models/`: Berisi cetak biru atau entitas struktur data utama (misal: kelas *Course*).
+- `lib/services/`: Bertanggung jawab penuh dalam mengambil data mentah dari sumber luar (misal: memuat dan mendekode data dari *file* JSON di folder *assets*).
+- `lib/repositories/`: Berperan sebagai perantara (*bridge*) antara *Service* dan *Provider*, menyaring dan menyediakan data yang siap diolah.
+- `lib/providers/`: Mengelola *state* reaktif aplikasi menggunakan `ChangeNotifier` serta memicu pembaruan UI secara otomatis (*reactive UI*).
+- `lib/screens/`: Menyimpan kumpulan halaman utama antarmuka pengguna (*User Interface*).
+- `lib/widgets/`: Berisi komponen antarmuka modular atau kustom yang dapat digunakan kembali (*reusable widgets*).
