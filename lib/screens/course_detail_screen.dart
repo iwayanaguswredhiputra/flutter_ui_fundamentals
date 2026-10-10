@@ -15,7 +15,6 @@ class CourseDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(course.title, style: const TextStyle(color: Colors.white, fontSize: 16)),
-        backgroundColor: Color.fromARGB(255, 1, 154, 249),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(

@@ -19,11 +19,17 @@ class CourseExplorerApp extends StatelessWidget {
   const CourseExplorerApp({super.key});
   @override
   Widget build(BuildContext context) {
+    const primaryColor = Color.fromARGB(255, 1, 154, 249);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Pertemuan 6 - Tahap 12',
+      title: 'Course Explorer v2',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
+          appBarTheme: const AppBarTheme(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white, 
+          elevation: 0,
+        ),
         useMaterial3: true,
       ),
       home: const CourseExplorerScreen(),
