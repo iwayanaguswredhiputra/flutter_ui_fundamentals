@@ -1,9 +1,11 @@
+// 2415051007 - I Wayan Agus Wredhi Putra
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/course_provider.dart';
 import '../widgets/course_card.dart';
 import '../widgets/error_view.dart'; 
 import 'favorites_screen.dart';
+import '../screens/add_course_screen.dart';
 class CourseExplorerScreen extends StatefulWidget {
   const CourseExplorerScreen({super.key});
   @override
@@ -95,40 +97,18 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: provider.courses.length,
                 itemBuilder: (context, index) {
-                  final course = provider.courses[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    child: ListTile(
-                      title: Text(
-                        course.title,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        course.status,
-                        style: TextStyle(
-                          color: course.status.toLowerCase() == 'selesai' ||
-                                  course.status.toLowerCase() == 'done' ||
-                                  course.status.toLowerCase() == 'wajib'
-                              ? Colors.green
-                              : Colors.orange,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  );
+                  return CourseCard(course: provider.courses[index]);
                 },
               ),
           ],
         ),
       ),
-      // Halaman Courses dengan Identitas & lengkap 4 State
       Builder(
         builder: (context) {
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // Kotak Identitas Nama & NIM
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(14),
@@ -147,15 +127,11 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // 1. Loading State
                 if (provider.isLoading)
                   const Padding(
                     padding: EdgeInsets.only(top: 60),
                     child: Center(child: CircularProgressIndicator()),
                   )
-                
-                // 2. Error State
                 else if (provider.error != null)
                   SizedBox(
                     height: 350,
@@ -164,8 +140,6 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
                       onRetry: () => provider.loadCourses(),
                     ),
                   )
-                
-                // 3. Empty State
                 else if (provider.courses.isEmpty)
                   const Padding(
                     padding: EdgeInsets.only(top: 60),
@@ -176,8 +150,6 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
                       ),
                     ),
                   )
-                
-                // 4. Success State
                 else
                   ListView.builder(
                     shrinkWrap: true,
@@ -192,34 +164,6 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
           );
         },
       ),
-      Builder(
-        builder: (context) {
-          if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (provider.error != null) {
-            return ErrorView(
-              message: provider.error!,
-              onRetry: () => provider.loadCourses(),
-            );
-          }
-          if (provider.courses.isEmpty) {
-            return const Center(
-              child: Text(
-                'Data course belum tersedia',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            );
-          }
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: provider.courses.length,
-            itemBuilder: (context, index) {
-              return CourseCard(course: provider.courses[index]);
-            },
-          );
-        },
-      ),
       const FavoritesScreen(),
     ];
     return Scaffold(
@@ -228,6 +172,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
           'Course Explorer v2',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        backgroundColor: const Color.fromARGB(255, 1, 154, 249),
       ),
       body: IndexedStack(
         index: _selectedIndex,
@@ -256,6 +201,16 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
             label: 'Favorites',
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddCourseScreen()),
+          );
+        },
+        backgroundColor: const Color.fromARGB(255, 1, 154, 249),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

@@ -38,4 +38,21 @@ class CourseProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+  bool isSaving = false;
+Future<bool> createCourse(Course course) async {
+  isSaving = true;
+  notifyListeners();
+  try {
+    final newCourse = await repository.createCourse(course);
+    courses.insert(0, newCourse); 
+    isSaving = false;
+    notifyListeners();
+    return true;
+  } catch (e) {
+    error = 'Gagal membuat course: ${e.toString()}';
+    isSaving = false;
+    notifyListeners();
+    return false;
+  }
+}
 }
