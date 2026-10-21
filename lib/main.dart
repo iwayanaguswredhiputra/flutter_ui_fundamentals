@@ -2,12 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'repositories/course_repository.dart';
-import 'services/course_service.dart';
+import 'services/course_api_service.dart'; 
 import 'providers/course_provider.dart';
 import 'screens/course_explorer_screen.dart';
 void main() {
-  final courseService = CourseService();
-  final courseRepository = CourseRepository(courseService);
+  final courseApiService = CourseApiService('https://jsonplaceholder.typicode.com');
+  final courseRepository = CourseRepository(courseApiService);
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => CourseProvider(courseRepository)..loadCourses(),
@@ -25,7 +26,7 @@ class CourseExplorerApp extends StatelessWidget {
       title: 'Course Explorer v2',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
-          appBarTheme: const AppBarTheme(
+        appBarTheme: const AppBarTheme(
           backgroundColor: primaryColor,
           foregroundColor: Colors.white, 
           elevation: 0,
