@@ -15,3 +15,10 @@ Proyek aplikasi *Course Explorer v2* dikembangkan dengan menerapkan pola **Clean
 - `lib/providers/`: Mengelola *state* reaktif aplikasi menggunakan `ChangeNotifier` serta memicu pembaruan UI secara otomatis (*reactive UI*).
 - `lib/screens/`: Menyimpan kumpulan halaman utama antarmuka pengguna (*User Interface*).
 - `lib/widgets/`: Berisi komponen antarmuka modular atau kustom yang dapat digunakan kembali (*reusable widgets*).
+
+
+## Catatan Endpoint REST API (Pertemuan 7)
+- **URL Endpoint:** https://jsonplaceholder.typicode.com/posts[cite: 2]
+- **HTTP Method:** GET
+- **Status Code:** 200 OK[cite: 2]
+- **Field JSON:** id, title, body, userId[cite: 2]
