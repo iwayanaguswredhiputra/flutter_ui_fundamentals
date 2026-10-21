@@ -21,6 +21,7 @@ class CourseProvider extends ChangeNotifier {
       courses = await repository.getCourses();
     } catch (e) {
       error = 'Gagal memuat data: ${e.toString()}';
+      courses = [];
     } finally {
       isLoading = false;
       notifyListeners();

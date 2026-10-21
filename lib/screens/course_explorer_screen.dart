@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/course_provider.dart';
 import '../widgets/course_card.dart';
+import '../widgets/error_view.dart'; 
 import 'favorites_screen.dart';
 class CourseExplorerScreen extends StatefulWidget {
   const CourseExplorerScreen({super.key});
@@ -120,22 +121,93 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
           ],
         ),
       ),
+      // Halaman Courses dengan Identitas & lengkap 4 State
+      Builder(
+        builder: (context) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Kotak Identitas Nama & NIM
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo.shade50,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '$studentId • $studentName',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 1, 154, 249),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // 1. Loading State
+                if (provider.isLoading)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 60),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                
+                // 2. Error State
+                else if (provider.error != null)
+                  SizedBox(
+                    height: 350,
+                    child: ErrorView(
+                      message: provider.error!,
+                      onRetry: () => provider.loadCourses(),
+                    ),
+                  )
+                
+                // 3. Empty State
+                else if (provider.courses.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 60),
+                    child: Center(
+                      child: Text(
+                        'Data course belum tersedia',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    ),
+                  )
+                
+                // 4. Success State
+                else
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: provider.courses.length,
+                    itemBuilder: (context, index) {
+                      return CourseCard(course: provider.courses[index]);
+                    },
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
       Builder(
         builder: (context) {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
           if (provider.error != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(provider.error!, style: const TextStyle(color: Colors.red)),
-                  ElevatedButton(
-                    onPressed: () => provider.loadCourses(),
-                    child: const Text('Coba Lagi'),
-                  ),
-                ],
+            return ErrorView(
+              message: provider.error!,
+              onRetry: () => provider.loadCourses(),
+            );
+          }
+          if (provider.courses.isEmpty) {
+            return const Center(
+              child: Text(
+                'Data course belum tersedia',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             );
           }
