@@ -1,23 +1,30 @@
-//2415051007 - I Wayan Agus Wredhi Putra
 class Course {
+  final int? id;
   final String code;
   final String title;
   final int credits;
   final String status;
-
-  Course({
+  const Course({
+    this.id,
     required this.code,
     required this.title,
     required this.credits,
-    required this.status,
+    this.status = 'planned',
   });
-
   factory Course.fromJson(Map<String, dynamic> json) {
     return Course(
-      code: json['code'] as String,
-      title: json['title'] as String,
-      credits: json['credits'] as int,
-      status: json['status'] as String,
+      id: json['id'] as int?,
+      code: json['code'] as String? ?? 'POST-${json['id'] ?? 0}',
+      title: json['title'] as String? ?? 'No Title',
+      credits: json['credits'] as int? ?? 3,
+      status: (json['status'] as String?) ?? 'active',
     );
   }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'code': code,
+        'title': title,
+        'credits': credits,
+        'status': status,
+      };
 }
