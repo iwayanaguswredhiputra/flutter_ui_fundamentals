@@ -55,7 +55,6 @@ class CourseProvider extends ChangeNotifier {
       return false;
     }
   }
-  
   Future<bool> updateCourse(int id, Course course) async {
     isSaving = true;
     error = null;
@@ -72,6 +71,23 @@ class CourseProvider extends ChangeNotifier {
     } catch (e) {
       error = 'Gagal memperbarui course: ${e.toString()}';
       isSaving = false;
+      notifyListeners();
+      return false;
+    }
+  }
+  Future<bool> deleteCourse(int id, String code) async {
+    error = null;
+    notifyListeners();
+    try {
+      await repository.deleteCourse(id);
+      courses.removeWhere((c) => c.code == code);
+      if (favorites.contains(code)) {
+        favorites.remove(code);
+      }
+      notifyListeners();
+      return true;
+    } catch (e) {
+      error = 'Gagal menghapus course: ${e.toString()}';
       notifyListeners();
       return false;
     }
