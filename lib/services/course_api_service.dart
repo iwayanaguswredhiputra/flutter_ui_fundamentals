@@ -30,4 +30,17 @@ class CourseApiService {
     }
     throw Exception('Gagal membuat course');
   }
+  Future<Course> updateCourse(int id, Course course) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/posts/$id'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(course.toJson()),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Course.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
+    }
+    throw Exception('Gagal memperbarui course');
+  }
 }

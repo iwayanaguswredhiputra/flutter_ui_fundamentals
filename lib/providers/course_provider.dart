@@ -39,20 +39,41 @@ class CourseProvider extends ChangeNotifier {
     notifyListeners();
   }
   bool isSaving = false;
-Future<bool> createCourse(Course course) async {
-  isSaving = true;
-  notifyListeners();
-  try {
-    final newCourse = await repository.createCourse(course);
-    courses.insert(0, newCourse); 
-    isSaving = false;
+  Future<bool> createCourse(Course course) async {
+    isSaving = true;
     notifyListeners();
-    return true;
-  } catch (e) {
-    error = 'Gagal membuat course: ${e.toString()}';
-    isSaving = false;
-    notifyListeners();
-    return false;
+    try {
+      final newCourse = await repository.createCourse(course);
+      courses.insert(0, newCourse); 
+      isSaving = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      error = 'Gagal membuat course: ${e.toString()}';
+      isSaving = false;
+      notifyListeners();
+      return false;
+    }
   }
-}
+  
+  Future<bool> updateCourse(int id, Course course) async {
+    isSaving = true;
+    error = null;
+    notifyListeners();
+    try {
+      final updatedCourse = await repository.updateCourse(id, course);
+      final index = courses.indexWhere((c) => c.code == course.code);
+      if (index != -1) {
+        courses[index] = updatedCourse;
+      }
+      isSaving = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      error = 'Gagal memperbarui course: ${e.toString()}';
+      isSaving = false;
+      notifyListeners();
+      return false;
+    }
+  }
 }

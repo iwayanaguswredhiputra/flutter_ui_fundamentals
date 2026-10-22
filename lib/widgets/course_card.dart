@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/course.dart';
 import '../providers/course_provider.dart';
 import '../screens/course_detail_screen.dart';
+import '../screens/edit_course_screen.dart'; 
 class CourseCard extends StatelessWidget {
   const CourseCard({super.key, required this.course});
   final Course course;
@@ -17,14 +18,30 @@ class CourseCard extends StatelessWidget {
           child: ListTile(
             title: Text('${course.title} (${course.code})'),
             subtitle: Text('${course.credits} SKS | Status: ${course.status}'),
-            trailing: IconButton(
-              icon: Icon(
-                isFav ? Icons.favorite : Icons.favorite_border,
-                color: isFav ? Colors.red : Colors.grey,
-              ),
-              onPressed: () {
-                provider.toggleFavorite(course.code);
-              },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.blue),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditCourseScreen(course: course),
+                      ),
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    isFav ? Icons.favorite : Icons.favorite_border,
+                    color: isFav ? Colors.red : Colors.grey,
+                  ),
+                  onPressed: () {
+                    provider.toggleFavorite(course.code);
+                  },
+                ),
+              ],
             ),
             onTap: () {
               Navigator.push(

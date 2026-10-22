@@ -18,7 +18,7 @@ Proyek aplikasi *Course Explorer v2* dikembangkan dengan menerapkan pola **Clean
 
 
 ## Catatan Endpoint REST API (Pertemuan 7)
-- **URL Endpoint:** https://jsonplaceholder.typicode.com/posts[cite: 2]
+- **URL Endpoint:** https://jsonplaceholder.typicode.com/posts
 - **HTTP Method:** GET
-- **Status Code:** 200 OK[cite: 2]
-- **Field JSON:** id, title, body, userId[cite: 2]
+- **Status Code:** 200 OK
+- **Field JSON:** id, title, body, userId
