@@ -40,5 +40,10 @@ class CourseSupabaseService implements CourseDataSource {
     return Course.fromJson(row);
   }
   @override
-  Future<void> deleteCourse(int id) => throw UnimplementedError();
+  Future<void> deleteCourse(int id) async {
+    await supabase
+        .from('courses')
+        .delete()
+        .eq('id', id);
+  }
 }
