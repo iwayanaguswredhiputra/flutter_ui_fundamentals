@@ -2,9 +2,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/course.dart';
-class CourseApiService {
+import 'course_data_source.dart';
+
+class CourseApiService implements CourseDataSource {
   final String baseUrl;
   CourseApiService(this.baseUrl);
+  @override
   Future<List<Course>> getCourses() async {
     final response = await http.get(Uri.parse('$baseUrl/posts'));
     if (response.statusCode == 200) {
@@ -16,13 +19,13 @@ class CourseApiService {
       throw Exception('Gagal mengambil data dari API: HTTP ${response.statusCode}');
     }
   }
+  @override
   Future<Course> createCourse(Course course) async {
     final response = await http.post(
       Uri.parse('$baseUrl/posts'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(course.toJson()),
     );
-
     if (response.statusCode == 200 || response.statusCode == 201) {
       return Course.fromJson(
         jsonDecode(response.body) as Map<String, dynamic>,
@@ -30,6 +33,7 @@ class CourseApiService {
     }
     throw Exception('Gagal membuat course');
   }
+  @override
   Future<Course> updateCourse(int id, Course course) async {
     final response = await http.put(
       Uri.parse('$baseUrl/posts/$id'),
@@ -43,6 +47,7 @@ class CourseApiService {
     }
     throw Exception('Gagal memperbarui course');
   }
+  @override
   Future<void> deleteCourse(int id) async {
     final response = await http.delete(
       Uri.parse('$baseUrl/posts/$id'),

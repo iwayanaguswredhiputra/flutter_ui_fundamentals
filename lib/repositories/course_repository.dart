@@ -1,18 +1,20 @@
+// 2415051007 - I Wayan Agus Wredhi Putra
 import '../models/course.dart';
-import '../services/course_api_service.dart';
+import '../services/course_data_source.dart';
+
 class CourseRepository {
-  final CourseApiService apiService;
-  CourseRepository(this.apiService);
+  final CourseDataSource dataSource;
+  CourseRepository(this.dataSource);
   Future<List<Course>> getCourses() async {
-    return await apiService.getCourses();
+    return await dataSource.getCourses();
   }
   Future<Course> createCourse(Course course) async {
-    return await apiService.createCourse(course);
+    return await dataSource.createCourse(course);
   }
   Future<Course> updateCourse(int id, Course course) async {
-    return await apiService.updateCourse(id, course);
+    return await dataSource.updateCourse(id, course);
   }
   Future<void> deleteCourse(int id) async {
-    return await apiService.deleteCourse(id);
+    return await dataSource.deleteCourse(id);
   }
 }
