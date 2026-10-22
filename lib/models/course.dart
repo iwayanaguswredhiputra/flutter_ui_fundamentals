@@ -21,11 +21,17 @@ class Course {
       status: (json['status'] as String?) ?? 'active',
     );
   }
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'code': code,
-        'title': title,
-        'credits': credits,
-        'status': status,
-      };
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{
+      'code': code,
+      'title': title,
+      'credits': credits,
+      'status': status.toLowerCase(), 
+    };
+    if (id != null) {
+      data['id'] = id;
+    }
+
+    return data;
+  }
 }
