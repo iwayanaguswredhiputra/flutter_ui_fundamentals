@@ -16,9 +16,17 @@ Proyek aplikasi *Course Explorer v2* dikembangkan dengan menerapkan pola **Clean
 - `lib/screens/`: Menyimpan kumpulan halaman utama antarmuka pengguna (*User Interface*).
 - `lib/widgets/`: Berisi komponen antarmuka modular atau kustom yang dapat digunakan kembali (*reusable widgets*).
 
-
 ## Catatan Endpoint REST API (Pertemuan 7)
 - **URL Endpoint:** https://jsonplaceholder.typicode.com/posts
 - **HTTP Method:** GET
 - **Status Code:** 200 OK
 - **Field JSON:** id, title, body, userId
+
+## Backend yang Digunakan
+- **REST API (Dummy / Tahap Awal):** JSONPlaceholder
+- **Backend & Database Utama:** Supabase (PostgreSQL) dengan penerapan *Row Level Security* (RLS) serta *Database Constraints* untuk menjaga integritas data.
+
+## Cara Menjalankan Aplikasi
+1. Lakukan kloning pada repositori ini:
+   ```bash
+   git clone <https://github.com/iwayanaguswredhiputra/flutter_ui_fundamentals>
