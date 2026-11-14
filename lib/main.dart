@@ -7,6 +7,7 @@ import 'providers/course_provider.dart';
 import 'screens/course_explorer_screen.dart';
 import '../services/course_supabase_service.dart';
 import 'screens/login_screen.dart';
+import 'services/auth_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +48,9 @@ class CourseExplorerApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: isLoggedIn ? const CourseExplorerScreen() : const LoginScreen(),
+      home: AuthService.instance.isLoggedIn 
+          ? const CourseExplorerScreen() 
+          : const LoginScreen(),
     );
   }
 }
