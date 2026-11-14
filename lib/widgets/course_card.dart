@@ -5,9 +5,14 @@ import '../models/course.dart';
 import '../providers/course_provider.dart';
 import '../screens/course_detail_screen.dart';
 import '../screens/edit_course_screen.dart';
+import 'role_guard.dart'; 
+
 class CourseCard extends StatelessWidget {
-  const CourseCard({super.key, required this.course});
+  const CourseCard({super.key, required this.course, required this.role});
+  
   final Course course;
+  final String role; 
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CourseProvider>(
@@ -21,63 +26,75 @@ class CourseCard extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.blue),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditCourseScreen(course: course),
+                RoleGuard(
+                  role: role,
+                  allowed: const ['instructor', 'admin'],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditCourseScreen(course: course),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                //2415051007 - I Wayan Agus Wredhi Putra
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext dialogContext) {
-                        return AlertDialog(
-                          title: const Text('Hapus Course'),
-                          content: Text('Apakah Anda yakin ingin menghapus ${course.title}?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(dialogContext),
-                              child: const Text('Batal'),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(dialogContext); 
-                                final success = await provider.deleteCourse(course.id ?? 1, course.code);
-                                if (!context.mounted) return;
-                                if (success) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Course berhasil dihapus!')),
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(provider.error ?? 'Gagal menghapus')),
-                                  );
-                                }
-                              },
-                              child: const Text('Hapus', style: TextStyle(color: Colors.red)),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: Icon(
-                    isFav ? Icons.favorite : Icons.favorite_border,
-                    color: isFav ? Colors.red : Colors.grey,
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext dialogContext) {
+                              return AlertDialog(
+                                title: const Text('Hapus Course'),
+                                content: Text('Apakah Anda yakin ingin menghapus ${course.title}?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(dialogContext),
+                                    child: const Text('Batal'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      Navigator.pop(dialogContext); 
+                                      final success = await provider.deleteCourse(course.id ?? 1, course.code);
+                                      if (!context.mounted) return;
+                                      if (success) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Course berhasil dihapus!')),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text(provider.error ?? 'Gagal menghapus')),
+                                        );
+                                      }
+                                    },
+                                    child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                  onPressed: () {
-                    provider.toggleFavorite(course.code);
-                  },
+                ),
+                RoleGuard(
+                  role: role,
+                  allowed: const ['student'],  
+                  child: IconButton(
+                    icon: Icon(
+                      isFav ? Icons.favorite : Icons.favorite_border,
+                      color: isFav ? Colors.red : Colors.grey,
+                    ),
+                    onPressed: () {
+                      provider.toggleFavorite(course.code);
+                    },
+                  ),
                 ),
               ],
             ),
