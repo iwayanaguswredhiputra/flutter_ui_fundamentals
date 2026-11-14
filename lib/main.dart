@@ -6,23 +6,32 @@ import 'repositories/course_repository.dart';
 import 'providers/course_provider.dart';
 import 'screens/course_explorer_screen.dart';
 import '../services/course_supabase_service.dart';
+import 'screens/login_screen.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: 'https://xtucenwhlvxwhqfwbefa.supabase.co',
     publishableKey: 'sb_publishable_B9ysjNe3H7Tbyegcq7ZsIg_ROphP9BT', 
   );
+
+  final session = Supabase.instance.client.auth.currentSession;
+
   final courseSupabaseService = CourseSupabaseService();
   final courseRepository = CourseRepository(courseSupabaseService);
+  
   runApp(
     ChangeNotifierProvider(
       create: (_) => CourseProvider(courseRepository)..loadCourses(),
-      child: const CourseExplorerApp(),
+      child: CourseExplorerApp(isLoggedIn: session != null),
     ),
   );
 }
+
 class CourseExplorerApp extends StatelessWidget {
-  const CourseExplorerApp({super.key});
+  final bool isLoggedIn;
+  const CourseExplorerApp({super.key, required this.isLoggedIn});
+
   @override
   Widget build(BuildContext context) {
     const primaryColor = Color.fromARGB(255, 1, 154, 249);
@@ -38,7 +47,7 @@ class CourseExplorerApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const CourseExplorerScreen(),
+      home: isLoggedIn ? const CourseExplorerScreen() : const LoginScreen(),
     );
   }
 }

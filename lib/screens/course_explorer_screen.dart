@@ -6,15 +6,20 @@ import '../widgets/course_card.dart';
 import '../widgets/error_view.dart'; 
 import 'favorites_screen.dart';
 import '../screens/add_course_screen.dart';
+import '../services/auth_service.dart';
+import 'login_screen.dart';
+
 class CourseExplorerScreen extends StatefulWidget {
   const CourseExplorerScreen({super.key});
   @override
   State<CourseExplorerScreen> createState() => _CourseExplorerScreenState();
 }
+
 class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
   int _selectedIndex = 0;
   final String studentName = "I Wayan Agus Wredhi Putra";
   final String studentId = "2415051007";
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CourseProvider>();
@@ -166,6 +171,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
       ),
       const FavoritesScreen(),
     ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -173,6 +179,20 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color.fromARGB(255, 1, 154, 249),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            tooltip: 'Logout',
+            onPressed: () async {
+              await AuthService.instance.logout();
+              if (!context.mounted) return;
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                (route) => false,
+              );
+            },
+          ),
+        ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
