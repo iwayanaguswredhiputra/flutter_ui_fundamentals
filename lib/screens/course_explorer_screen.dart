@@ -7,6 +7,7 @@ import '../widgets/error_view.dart';
 import 'favorites_screen.dart';
 import '../screens/add_course_screen.dart';
 import '../services/auth_service.dart';
+import '../services/profile_service.dart'; 
 import 'login_screen.dart';
 
 class CourseExplorerScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CourseProvider>();
+    
     final List<Widget> pages = [
       SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -108,6 +110,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
           ],
         ),
       ),
+      
       Builder(
         builder: (context) {
           return SingleChildScrollView(
@@ -169,7 +172,48 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
           );
         },
       ),
+      
       const FavoritesScreen(),
+
+      FutureBuilder<UserProfile?>(
+        future: ProfileService().getMyProfile(),
+        builder: (context, snap) {
+          if (snap.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snap.hasError || snap.data == null) {
+            return const Center(child: Text('Gagal memuat profil'));
+          }
+          final p = snap.data!;
+          return ListView(
+            padding: const EdgeInsets.all(16.0),
+            children: [
+              const SizedBox(height: 20),
+              const CircleAvatar(
+                radius: 40,
+                backgroundColor: Color.fromARGB(255, 1, 154, 249),
+                child: Icon(Icons.person, size: 50, color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: const Text('Nama'),
+                subtitle: Text(p.name.isEmpty ? '-' : p.name),
+              ),
+              ListTile(
+                leading: const Icon(Icons.email),
+                title: const Text('Email'),
+                subtitle: Text(p.email),
+              ),
+              ListTile(
+                leading: const Icon(Icons.badge),
+                title: const Text('Role'),
+                subtitle: Text(p.role),
+              ),
+            ],
+          );
+        },
+      ),
     ];
 
     return Scaffold(
@@ -202,6 +246,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
         currentIndex: _selectedIndex,
         selectedItemColor: const Color.fromARGB(255, 1, 154, 249),
         unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed, 
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
@@ -219,6 +264,10 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favorites',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile', 
           ),
         ],
       ),

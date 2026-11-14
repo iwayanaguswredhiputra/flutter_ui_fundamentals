@@ -15,6 +15,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailC = TextEditingController();
   final _passC = TextEditingController();
   final _confirmC = TextEditingController();
+  
+  final _nameC = TextEditingController();
+  String _role = 'student'; 
+
   bool _loading = false;
 
   @override
@@ -22,6 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _emailC.dispose();
     _passC.dispose();
     _confirmC.dispose();
+    _nameC.dispose(); 
     super.dispose();
   }
 
@@ -37,6 +42,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       final res = await AuthService.instance.register(
         email: _emailC.text.trim(),
         password: _passC.text,
+        name: _nameC.text.trim(),
+        role: _role,
       );
       if (!mounted) return;
 
@@ -69,6 +76,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: ListView(
             children: [
               TextFormField(
+                controller: _nameC,
+                decoration: const InputDecoration(labelText: 'Nama Lengkap'),
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Nama wajib diisi' : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
                 controller: _emailC,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(labelText: 'Email'),
@@ -77,6 +90,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   if (!v.contains('@')) return 'Format email tidak valid';
                   return null;
                 },
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                initialValue: _role,
+                decoration: const InputDecoration(labelText: 'Daftar sebagai'),
+                items: const [
+                  DropdownMenuItem(value: 'student', child: Text('Mahasiswa / Student')),
+                  DropdownMenuItem(value: 'instructor', child: Text('Pengajar / Instructor')),
+                ],
+                onChanged: (v) => setState(() => _role = v ?? 'student'),
               ),
               const SizedBox(height: 12),
               TextFormField(
