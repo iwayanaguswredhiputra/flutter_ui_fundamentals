@@ -96,14 +96,13 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Card(
-                        color: Colors.red.shade50,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
+                    if (isStudent) ...[
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Card(
+                          color: Colors.red.shade50,
                           child: Padding(
-                            padding: const EdgeInsets.all(0),
+                            padding: const EdgeInsets.all(16.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -122,7 +121,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 16),

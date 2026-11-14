@@ -1,10 +1,12 @@
-//2415051007 - I Wayan Agus Wredhi Putra
+// 2415051007 - I Wayan Agus Wredhi Putra
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/course.dart';
 import 'course_data_source.dart';
 
 class CourseSupabaseService implements CourseDataSource {
   final supabase = Supabase.instance.client;
+
+  String get _uid => supabase.auth.currentUser!.id;
 
   @override
   Future<List<Course>> getCourses() async {
@@ -20,25 +22,33 @@ class CourseSupabaseService implements CourseDataSource {
 
   @override
   Future<Course> createCourse(Course course) async {
+    final jsonMap = course.toJson();
+    
+    jsonMap['instructor_id'] = _uid; 
+
     final row = await supabase
         .from('courses')
-        .insert(course.toJson())
+        .insert(jsonMap) 
         .select()
         .single();
 
     return Course.fromJson(row);
   }
+
   @override
   Future<Course> updateCourse(int id, Course course) async {
+    final jsonMap = course.toJson();
+
     final row = await supabase
         .from('courses')
-        .update(course.toJson())
+        .update(jsonMap)
         .eq('id', id)
         .select()
         .single();
 
     return Course.fromJson(row);
   }
+
   @override
   Future<void> deleteCourse(int id) async {
     await supabase

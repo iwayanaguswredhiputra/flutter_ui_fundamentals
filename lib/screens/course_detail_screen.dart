@@ -3,11 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/course.dart';
 import '../providers/course_provider.dart';
+import '../widgets/role_guard.dart';
+
 class CourseDetailScreen extends StatelessWidget {
-  const CourseDetailScreen({super.key, required this.course});
+  
+  // Tambahkan required this.role di sini agar error hilang
+  const CourseDetailScreen({
+    super.key, 
+    required this.course, 
+    required this.role,
+  });
+
   final Course course;
+  final String role;
   final String studentName = "I Wayan Agus Wredhi Putra";
   final String studentId = "2415051007";
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CourseProvider>();
@@ -16,6 +27,7 @@ class CourseDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(course.title, style: const TextStyle(color: Colors.white, fontSize: 16)),
         iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 1, 154, 249),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -41,18 +53,22 @@ class CourseDetailScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text('Status: ${course.status}', style: const TextStyle(fontSize: 16)),
             const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isFav ? Colors.red.shade50 : Colors.indigo.shade50,
-                  foregroundColor: isFav ? Colors.red : const Color.fromARGB(255, 1, 154, 249),
+            RoleGuard(
+              role: role,
+              allowed: const ['student'],
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isFav ? Colors.red.shade50 : Colors.indigo.shade50,
+                    foregroundColor: isFav ? Colors.red : const Color.fromARGB(255, 1, 154, 249),
+                  ),
+                  icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
+                  label: Text(isFav ? 'Hapus dari Favorit' : 'Tambah ke Favorit'),
+                  onPressed: () {
+                    provider.toggleFavorite(course.code);
+                  },
                 ),
-                icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
-                label: Text(isFav ? 'Hapus dari Favorit' : 'Tambah ke Favorit'),
-                onPressed: () {
-                  provider.toggleFavorite(course.code);
-                },
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 // 2415051007 - I Wayan Agus Wredhi Putra
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/course.dart';
 import '../providers/course_provider.dart';
 import '../screens/course_detail_screen.dart';
@@ -15,6 +16,9 @@ class CourseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+    final bool isMyCourse = course.instructorId == currentUserId;
+
     return Consumer<CourseProvider>(
       builder: (context, provider, child) {
         final isFav = provider.isFavorite(course.code);
@@ -26,63 +30,65 @@ class CourseCard extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                RoleGuard(
-                  role: role,
-                  allowed: const ['instructor', 'admin'],
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditCourseScreen(course: course),
-                            ),
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext dialogContext) {
-                              return AlertDialog(
-                                title: const Text('Hapus Course'),
-                                content: Text('Apakah Anda yakin ingin menghapus ${course.title}?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(dialogContext),
-                                    child: const Text('Batal'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.pop(dialogContext); 
-                                      final success = await provider.deleteCourse(course.id ?? 1, course.code);
-                                      if (!context.mounted) return;
-                                      if (success) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Course berhasil dihapus!')),
-                                        );
-                                      } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text(provider.error ?? 'Gagal menghapus')),
-                                        );
-                                      }
-                                    },
-                                    child: const Text('Hapus', style: TextStyle(color: Colors.red)),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
+                if (isMyCourse)
+                  RoleGuard(
+                    role: role,
+                    allowed: const ['instructor', 'admin'],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditCourseScreen(course: course),
+                              ),
+                            );
+                          },
+                        ),
+                        // 2415051007 - I Wayan Agus Wredhi Putra
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext dialogContext) {
+                                return AlertDialog(
+                                  title: const Text('Hapus Course'),
+                                  content: Text('Apakah Anda yakin ingin menghapus ${course.title}?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(dialogContext),
+                                      child: const Text('Batal'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(dialogContext); 
+                                        final success = await provider.deleteCourse(course.id ?? 1, course.code);
+                                        if (!context.mounted) return;
+                                        if (success) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text('Course berhasil dihapus!')),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text(provider.error ?? 'Gagal menghapus')),
+                                          );
+                                        }
+                                      },
+                                      child: const Text('Hapus', style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 RoleGuard(
                   role: role,
                   allowed: const ['student'],  
@@ -102,7 +108,7 @@ class CourseCard extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CourseDetailScreen(course: course),
+                  builder: (context) => CourseDetailScreen(course: course, role: role),
                 ),
               );
             },
