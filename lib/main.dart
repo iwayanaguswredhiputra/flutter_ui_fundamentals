@@ -10,12 +10,16 @@ import 'screens/login_screen.dart';
 import 'services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'services/notification_service.dart';
+import 'app_keys.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   await Supabase.initialize(
     url: 'https://xtucenwhlvxwhqfwbefa.supabase.co',
@@ -44,6 +48,7 @@ class CourseExplorerApp extends StatelessWidget {
     const primaryColor = Color.fromARGB(255, 1, 154, 249);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: messengerKey,
       title: 'Course Explorer v2',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
