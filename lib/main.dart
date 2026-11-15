@@ -8,9 +8,15 @@ import 'screens/course_explorer_screen.dart';
 import '../services/course_supabase_service.dart';
 import 'screens/login_screen.dart';
 import 'services/auth_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   await Supabase.initialize(
     url: 'https://xtucenwhlvxwhqfwbefa.supabase.co',
     publishableKey: 'sb_publishable_B9ysjNe3H7Tbyegcq7ZsIg_ROphP9BT', 
