@@ -10,6 +10,7 @@ import '../screens/add_course_screen.dart';
 import '../services/auth_service.dart';
 import '../services/profile_service.dart';
 import 'login_screen.dart';
+import '../services/notification_service.dart';
 
 class CourseExplorerScreen extends StatefulWidget {
   const CourseExplorerScreen({super.key});
@@ -28,6 +29,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
   void initState() {
     super.initState();
     _profileFuture = ProfileService().getMyProfile();  
+    NotificationService.instance.requestPermission();
   }
 
   @override
