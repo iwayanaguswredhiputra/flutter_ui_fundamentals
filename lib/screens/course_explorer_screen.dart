@@ -30,6 +30,7 @@ class _CourseExplorerScreenState extends State<CourseExplorerScreen> {
     super.initState();
     _profileFuture = ProfileService().getMyProfile();  
     NotificationService.instance.requestPermission();
+    NotificationService.instance.getToken();
   }
 
   @override

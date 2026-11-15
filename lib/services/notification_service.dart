@@ -7,8 +7,6 @@ class NotificationService {
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
-  /// Meminta izin notifikasi dan mengembalikan statusnya:
-  /// authorized | provisional | denied | notDetermined
   Future<AuthorizationStatus> requestPermission() async {
     final settings = await _messaging.requestPermission(
       alert: true,
@@ -18,5 +16,20 @@ class NotificationService {
 
     debugPrint('Notification permission: ${settings.authorizationStatus.name}');
     return settings.authorizationStatus;
+  }
+
+  Future<String?> getToken() async {
+    // ignore: deprecated_member_use
+    final token = await _messaging.getToken();
+    debugPrint('FCM Token: $token');
+    return token;
+  }
+
+  void listenTokenRefresh(void Function(String token) onRefresh) {
+    // ignore: deprecated_member_use
+    _messaging.onTokenRefresh.listen((newToken) {
+      debugPrint('FCM Token diperbarui');
+      onRefresh(newToken);
+    });
   }
 }
